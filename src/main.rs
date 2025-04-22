@@ -2,13 +2,14 @@ use markdown_parser_rust::parse_markdown;
 
 fn main() {
     let input = "\
-# Heading 1
+# Heading
 
-This is a paragraph.
+> This is a quote.
+> It has multiple lines.
+>
+> Another line.
 
-## Heading 2
-
-Another paragraph.";
+Normal paragraph here.";
 
     let output = parse_markdown(input);
     println!("{}", output);

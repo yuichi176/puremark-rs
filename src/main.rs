@@ -15,6 +15,12 @@ fn main() {
 - Banana
 - Orange
 
+# Steps
+
+1. Wake up
+2. Brush teeth
+3. Eat breakfast
+
 Normal paragraph here.";
 
     let output = parse_markdown(input);

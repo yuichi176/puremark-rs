@@ -15,6 +15,8 @@ pub fn parse_markdown(input: &str) -> String {
             result.push(parse_blockquote(trimmed, &mut lines));
         } else if is_list_item(trimmed) {
             result.push(parse_list(trimmed, &mut lines));
+        } else if is_ordered_list_item(trimmed) {
+            result.push(parse_ordered_list(trimmed, &mut lines));
         } else {
             result.push(format!("<p>{}</p>", trimmed));
         }
@@ -77,6 +79,10 @@ fn is_list_item(line: &str) -> bool {
         || trimmed.starts_with("+ ")
 }
 
+/*
+ * Parses a list from the given line and the following lines.
+ * Returns the list as a formatted string.
+ */
 fn parse_list<'a, I>(first_line: &'a str, lines: &mut std::iter::Peekable<I>) -> String
 where
     I: Iterator<Item = &'a str>,
@@ -104,4 +110,57 @@ where
     }
 
     format!("<ul>\n{}\n</ul>", items.join("\n"))
+}
+
+fn is_ordered_list_item(line: &str) -> bool {
+    let trimmed = line.trim_start();
+    let mut chars = trimmed.chars();
+
+    while let Some(c) = chars.next() {
+        if c.is_digit(10) {
+            continue;
+        } else if c == '.' {
+            return chars.next() == Some(' ');
+        } else {
+            break;
+        }
+    }
+    false
+}
+
+/*
+ * Parses an ordered list from the given line and the following lines.
+ * Returns the ordered list as a formatted string.
+ */
+fn parse_ordered_list<'a, I>(first_line: &'a str, lines: &mut std::iter::Peekable<I>) -> String
+where
+    I: Iterator<Item = &'a str>,
+{
+    let mut items = Vec::new();
+    let mut current_line = Some(first_line);
+
+    while let Some(line) = current_line {
+        let trimmed = line.trim_start();
+
+        if is_ordered_list_item(trimmed) {
+            let content = trimmed
+                .splitn(2, ". ")
+                .nth(1)
+                .unwrap_or("")
+                .trim();
+            items.push(format!("<li>{}</li>", content));
+
+            current_line = lines.peek().copied();
+
+            if current_line.map_or(false, |s| is_ordered_list_item(s.trim_start())) {
+                lines.next(); // consume
+            } else {
+                break;
+            }
+        } else {
+            break;
+        }
+    }
+
+    format!("<ol>\n{}\n</ol>", items.join("\n"))
 }

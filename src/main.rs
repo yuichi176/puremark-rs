@@ -9,6 +9,12 @@ fn main() {
 >
 > Another line.
 
+# Fruits
+
+- Apple
+- Banana
+- Orange
+
 Normal paragraph here.";
 
     let output = parse_markdown(input);

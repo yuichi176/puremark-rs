@@ -13,6 +13,8 @@ pub fn parse_markdown(input: &str) -> String {
             result.push(format!("<h{level}>{}</h{level}>", content.trim()));
         } else if trimmed.starts_with('>') {
             result.push(parse_blockquote(trimmed, &mut lines));
+        } else if is_list_item(trimmed) {
+            result.push(parse_list(trimmed, &mut lines));
         } else {
             result.push(format!("<p>{}</p>", trimmed));
         }
@@ -66,4 +68,40 @@ where
 
     let blockquote_content = blockquote_lines.join("\n");
     format!("<blockquote>\n{}</blockquote>", blockquote_content)
+}
+
+fn is_list_item(line: &str) -> bool {
+    let trimmed = line.trim_start();
+    trimmed.starts_with("- ")
+        || trimmed.starts_with("* ")
+        || trimmed.starts_with("+ ")
+}
+
+fn parse_list<'a, I>(first_line: &'a str, lines: &mut std::iter::Peekable<I>) -> String
+where
+    I: Iterator<Item = &'a str>,
+{
+    let mut items = Vec::new();
+    let mut current_line = Some(first_line);
+
+    while let Some(line) = current_line {
+        let trimmed = line.trim_start();
+
+        if is_list_item(trimmed) {
+            let content = trimmed[2..].trim();
+            items.push(format!("<li>{}</li>", content));
+
+            current_line = lines.peek().copied();
+
+            if current_line.map_or(false, |s| is_list_item(s.trim_start())) {
+                lines.next(); // consume
+            } else {
+                break;
+            }
+        } else {
+            break;
+        }
+    }
+
+    format!("<ul>\n{}\n</ul>", items.join("\n"))
 }

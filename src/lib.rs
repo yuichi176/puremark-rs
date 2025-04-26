@@ -1,3 +1,6 @@
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
 pub fn parse_markdown(input: &str) -> String {
     let mut lines = input.lines().peekable();
     let mut result = Vec::new();

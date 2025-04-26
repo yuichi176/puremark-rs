@@ -1,4 +1,4 @@
-use markdown_parser_rust::parse_markdown;
+use puremark_rs::parse_markdown;
 
 fn main() {
     let input = "\

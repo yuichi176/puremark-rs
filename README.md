@@ -16,16 +16,16 @@ It is provided as an npm package using WebAssembly (WASM), and works seamlessly 
 
 ## 📦 Installation
 ```bash
-npm install puremark-rs
+npm install @yuichi176/puremark-rs
 ```
 or
 ```bash
-yarn add puremark-rs
+yarn add @yuichi176/puremark-rs
 ```
 
 ## 🚀 Usage
 ```javascript
-import { parseMarkdown } from 'puremark-rs';
+import { parse_markdown } from '@yuichi176/puremark-rs'
 
 const markdownText = `
 # Hello World
@@ -33,7 +33,7 @@ const markdownText = `
 This is puremark-rs!
 `;
 
-const html = parseMarkdown(markdownText);
+const html = parse_markdown(markdownText);
 console.log(html);
 ```
 Output:
